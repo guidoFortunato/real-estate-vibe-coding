@@ -1,5 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Property } from '../lib/properties';
 
 interface PropertyCardProps {
@@ -18,7 +19,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property, featuredDe
 
   if (featuredDesign) {
     return (
-      <div className="group relative rounded-xl overflow-hidden shadow-soft bg-white cursor-pointer">
+      <Link href={`/property/${property.slug}`} className="group relative rounded-xl overflow-hidden shadow-soft bg-white cursor-pointer block">
         <div className="aspect-4/3 w-full overflow-hidden relative">
           <Image
             alt={property.title}
@@ -59,12 +60,12 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property, featuredDe
             </div>
           </div>
         </div>
-      </div>
+      </Link>
     );
   }
 
   return (
-    <div className="bg-white rounded-xl overflow-hidden shadow-card hover:shadow-soft transition-all duration-300 group cursor-pointer h-full flex flex-col">
+    <Link href={`/property/${property.slug}`} className="bg-white rounded-xl overflow-hidden shadow-card hover:shadow-soft transition-all duration-300 group cursor-pointer h-full flex flex-col">
       <div className="relative aspect-4/3 overflow-hidden">
         <Image
           alt={property.title}
@@ -103,6 +104,6 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property, featuredDe
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };

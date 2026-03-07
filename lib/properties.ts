@@ -10,6 +10,8 @@ export interface Property {
   baths: number;
   area: number;
   image_url: string;
+  slug: string;
+  images: string[];
   type: 'sale' | 'rent';
   status: 'Exclusive' | 'New Arrival' | 'Standard';
   featured: boolean;
@@ -68,4 +70,32 @@ export async function getProperties({
     count: totalCount,
     totalPages,
   };
+}
+
+export async function getPropertyBySlug(slug: string): Promise<Property | null> {
+  const { data, error } = await supabase
+    .from('properties')
+    .select('*')
+    .eq('slug', slug)
+    .single();
+
+  if (error) {
+    console.error('Error fetching property by slug:', error.message);
+    return null;
+  }
+
+  return data as Property;
+}
+
+export async function getAllSlugs(): Promise<{ slug: string }[]> {
+  const { data, error } = await supabase
+    .from('properties')
+    .select('slug');
+
+  if (error) {
+    console.error('Error fetching property slugs:', error.message);
+    return [];
+  }
+
+  return data as { slug: string }[];
 }
