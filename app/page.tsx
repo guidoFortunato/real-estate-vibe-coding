@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Navbar } from "../components/Navbar";
 import { PropertyCard } from "../components/PropertyCard";
 import { FilterPills } from "../components/FilterPills";
@@ -5,6 +6,105 @@ import { Pagination } from "../components/Pagination";
 import { getProperties } from "../lib/properties";
 
 const PAGE_SIZE = 6;
+
+// SKELETONS
+
+function FeaturedSkeleton() {
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {[1, 2].map((i) => (
+        <div key={i} className="rounded-xl overflow-hidden shadow-soft bg-white h-100 animate-pulse">
+          <div className="w-full h-full bg-nordic-dark/5"></div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function GridSkeleton() {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {[1, 2, 3, 4, 5, 6].map((i) => (
+        <div key={i} className="bg-white rounded-xl overflow-hidden shadow-card h-95 animate-pulse">
+          <div className="aspect-4/3 relative w-full bg-nordic-dark/5"></div>
+          <div className="p-4 flex flex-col h-full">
+            <div className="h-6 bg-nordic-dark/10 rounded w-1/3 mb-4"></div>
+            <div className="h-5 bg-nordic-dark/10 rounded w-3/4 mb-2"></div>
+            <div className="h-4 bg-nordic-dark/10 rounded w-1/2 mb-4"></div>
+            <div className="mt-auto pt-3 border-t border-gray-100 flex justify-between">
+              <div className="h-4 bg-nordic-dark/10 rounded w-12"></div>
+              <div className="h-4 bg-nordic-dark/10 rounded w-12"></div>
+              <div className="h-4 bg-nordic-dark/10 rounded w-16"></div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// SERVER COMPONENTS DATA-FETCHERS
+
+async function FeaturedCollection() {
+  const result = await getProperties({ featuredOnly: true, pageSize: 100 });
+  const featuredProperties = result.data;
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {featuredProperties.map((property) => (
+        <PropertyCard
+          key={property.id}
+          property={property}
+          featuredDesign={true}
+        />
+      ))}
+    </div>
+  );
+}
+
+async function NewInMarketCollection({
+  currentPage,
+  typeFilter,
+}: {
+  currentPage: number;
+  typeFilter: "sale" | "rent" | "all";
+}) {
+  const propertiesResult = await getProperties({
+    page: currentPage,
+    pageSize: PAGE_SIZE,
+    type: typeFilter,
+    featuredOnly: false,
+  });
+
+  const newProperties = propertiesResult.data;
+  const { totalPages } = propertiesResult;
+
+  return (
+    <>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {newProperties.length > 0 ? (
+          newProperties.map((property) => (
+            <PropertyCard
+              key={property.id}
+              property={property}
+              featuredDesign={false}
+            />
+          ))
+        ) : (
+          <p className="col-span-full text-center text-nordic-muted py-12">
+            No properties found.
+          </p>
+        )}
+      </div>
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        baseUrl={typeFilter !== "all" ? `/?type=${typeFilter}` : "/"}
+      />
+    </>
+  );
+}
 
 interface HomeProps {
   searchParams: Promise<{ page?: string; type?: string }>;
@@ -14,20 +114,6 @@ export default async function Home({ searchParams }: HomeProps) {
   const params = await searchParams;
   const currentPage = Math.max(1, parseInt(params.page ?? "1", 10));
   const typeFilter = (params.type as "sale" | "rent" | "all") ?? "all";
-
-  const [featuredResult, propertiesResult] = await Promise.all([
-    getProperties({ featuredOnly: true, pageSize: 100 }),
-    getProperties({
-      page: currentPage,
-      pageSize: PAGE_SIZE,
-      type: typeFilter,
-      featuredOnly: false,
-    }),
-  ]);
-
-  const featuredProperties = featuredResult.data;
-  const newProperties = propertiesResult.data;
-  const { totalPages } = propertiesResult;
 
   return (
     <div className="min-h-screen bg-background-light font-display">
@@ -86,15 +172,9 @@ export default async function Home({ searchParams }: HomeProps) {
             </a>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {featuredProperties.map((property) => (
-              <PropertyCard
-                key={property.id}
-                property={property}
-                featuredDesign={true}
-              />
-            ))}
-          </div>
+          <Suspense fallback={<FeaturedSkeleton />}>
+            <FeaturedCollection />
+          </Suspense>
         </section>
 
         {/* NEW IN MARKET SECTION */}
@@ -105,7 +185,7 @@ export default async function Home({ searchParams }: HomeProps) {
                 New in Market
               </h2>
               <p className="text-nordic-muted mt-1 text-sm">
-                Fresh opportunities — page {currentPage} of {totalPages}.
+                Fresh opportunities just for you.
               </p>
             </div>
             <div className="hidden md:flex bg-white p-1 rounded-lg">
@@ -130,27 +210,12 @@ export default async function Home({ searchParams }: HomeProps) {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {newProperties.length > 0 ? (
-              newProperties.map((property) => (
-                <PropertyCard
-                  key={property.id}
-                  property={property}
-                  featuredDesign={false}
-                />
-              ))
-            ) : (
-              <p className="col-span-full text-center text-nordic-muted py-12">
-                No properties found.
-              </p>
-            )}
-          </div>
-
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            baseUrl={typeFilter !== "all" ? `/?type=${typeFilter}` : "/"}
-          />
+          <Suspense key={`${currentPage}-${typeFilter}`} fallback={<GridSkeleton />}>
+            <NewInMarketCollection
+              currentPage={currentPage}
+              typeFilter={typeFilter}
+            />
+          </Suspense>
         </section>
       </main>
     </div>
