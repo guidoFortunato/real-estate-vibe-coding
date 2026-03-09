@@ -1,4 +1,7 @@
+"use client";
+
 import Link from 'next/link';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface PaginationProps {
   currentPage: number;
@@ -7,6 +10,7 @@ interface PaginationProps {
 }
 
 export function Pagination({ currentPage, totalPages, baseUrl = '/' }: PaginationProps) {
+  const { t } = useTranslation();
   if (totalPages <= 1) return null;
 
   const getHref = (page: number) => {
@@ -43,12 +47,12 @@ export function Pagination({ currentPage, totalPages, baseUrl = '/' }: Paginatio
           className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white border border-nordic-dark/10 text-nordic-dark text-sm font-medium hover:border-mosque hover:text-mosque transition-all shadow-card"
         >
           <span className="material-icons text-sm">arrow_back</span>
-          Prev
+          {t('pagination.prev')}
         </Link>
       ) : (
         <span className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white border border-nordic-dark/5 text-nordic-muted/40 text-sm font-medium cursor-not-allowed select-none">
           <span className="material-icons text-sm">arrow_back</span>
-          Prev
+          {t('pagination.prev')}
         </span>
       )}
 
@@ -85,12 +89,12 @@ export function Pagination({ currentPage, totalPages, baseUrl = '/' }: Paginatio
           href={getHref(currentPage + 1)}
           className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white border border-nordic-dark/10 text-nordic-dark text-sm font-medium hover:border-mosque hover:text-mosque transition-all shadow-card"
         >
-          Next
+          {t('pagination.next')}
           <span className="material-icons text-sm">arrow_forward</span>
         </Link>
       ) : (
         <span className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white border border-nordic-dark/5 text-nordic-muted/40 text-sm font-medium cursor-not-allowed select-none">
-          Next
+          {t('pagination.next')}
           <span className="material-icons text-sm">arrow_forward</span>
         </span>
       )}

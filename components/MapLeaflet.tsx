@@ -4,6 +4,7 @@ import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { useMemo } from 'react';
+import { useTranslation } from '../hooks/useTranslation';
 
 // fix generic leaflet icon issues
 const icon = L.divIcon({
@@ -16,6 +17,7 @@ const icon = L.divIcon({
 });
 
 export default function MapLeaflet({ location }: { location: string }) {
+  const { t } = useTranslation();
   // A crude deterministic hash to generate coordinates based on location string 
   // since we don't have a geospatial DB or real lat/long data in this mock
   const coords = useMemo(() => {
@@ -43,7 +45,7 @@ export default function MapLeaflet({ location }: { location: string }) {
         <Marker position={coords} icon={icon}></Marker>
       </MapContainer>
       <a className="absolute bottom-2 right-2 bg-white/90 text-xs font-medium px-2 py-1 rounded shadow-sm text-nordic hover:text-mosque z-1000" href="#">
-        View on Map
+        {t('map.view_on_map')}
       </a>
     </div>
   );

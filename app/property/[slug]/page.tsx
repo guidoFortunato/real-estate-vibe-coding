@@ -1,10 +1,12 @@
 import { getPropertyBySlug, getAllSlugs } from "../../../lib/properties";
 import { notFound } from "next/navigation";
 import { Navbar } from "../../../components/Navbar";
-
 import { MapWrapper } from "../../../components/MapWrapper";
 import { Metadata } from "next";
 import { PropertyGallery } from "@/components/PropertyGallery";
+import { cookies } from "next/headers";
+import { COOKIE_NAME, Locale, defaultLocale } from "../../../lib/i18n/i18n-config";
+import { getTranslation } from "../../../lib/i18n/translations";
 
 export const revalidate = 3600; // ISR revalidate every hour
 
@@ -44,8 +46,12 @@ export default async function PropertyPage({
     notFound();
   }
 
+  const cookieStore = await cookies();
+  const locale = (cookieStore.get(COOKIE_NAME)?.value as Locale) || defaultLocale;
+  const t = (key: string) => getTranslation(locale, key);
+
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-US", {
+    return new Intl.NumberFormat(locale === 'en' ? 'en-US' : locale === 'es' ? 'es-ES' : 'fr-FR', {
       style: "currency",
       currency: "USD",
       maximumFractionDigits: 0,
@@ -53,7 +59,6 @@ export default async function PropertyPage({
   };
 
   const images = property.images ?? [];
-  const primaryImage = images[0];
 
   return (
     <div className="min-h-screen bg-clear-day text-nordic selection:bg-mosque/20">
@@ -77,7 +82,7 @@ export default async function PropertyPage({
                     {formatPrice(property.price)}{" "}
                     {property.price_per_month && (
                       <span className="text-sm font-normal text-nordic-muted">
-                        /mo
+                        {t('property.per_month')}
                       </span>
                     )}
                   </h1>
@@ -97,15 +102,15 @@ export default async function PropertyPage({
                   </div>
                   <div>
                     <h3 className="font-semibold text-nordic">
-                      LuxeEstate Agent
+                      {t('property_detail.agent_title')}
                     </h3>
                     <div className="flex items-center gap-1 text-xs text-mosque font-medium">
                       <span className="material-icons text-[14px]">star</span>
-                      <span>Top Rated Agent</span>
+                      <span>{t('property_detail.top_rated')}</span>
                     </div>
                   </div>
                   <div className="ml-auto flex items-center gap-2">
-                    <button className="w-9 h-9 flex items-center justify-center rounded-full bg-mosque/10 text-mosque hover:bg-mosque hover:text-white transition-colors cursor-pointer">
+                    <button className="w-9 h-9 flex items-center justify-center rounded-full bg-mosque/10 text-mosque hover:bg-mosque hover:text-white transition-colors cursor-pointer" title={t('nav.search')}>
                       <span className="material-icons text-base leading-none">chat</span>
                     </button>
                     <button className="w-9 h-9 flex items-center justify-center rounded-full bg-mosque/10 text-mosque hover:bg-mosque hover:text-white transition-colors cursor-pointer">
@@ -119,11 +124,11 @@ export default async function PropertyPage({
                     <span className="material-icons text-xl group-hover:scale-110 transition-transform">
                       calendar_today
                     </span>
-                    Schedule Visit
+                    {t('property_detail.schedule_visit')}
                   </button>
                   <button className="w-full bg-transparent border border-nordic/10 hover:border-mosque text-nordic/80 hover:text-mosque py-4 px-6 rounded-lg font-medium transition-all flex items-center justify-center gap-2 cursor-pointer">
                     <span className="material-icons text-xl">mail_outline</span>
-                    Contact Agent
+                    {t('property_detail.contact_agent')}
                   </button>
                 </div>
               </div>
@@ -137,7 +142,7 @@ export default async function PropertyPage({
           <div className="lg:col-span-8 lg:row-start-2 -mt-8 space-y-8">
             <div className="bg-white p-8 rounded-xl shadow-sm border border-mosque/5">
               <h2 className="text-lg font-semibold mb-6 text-nordic">
-                Property Features
+                {t('property_detail.features_title')}
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 <div className="flex flex-col items-center justify-center p-4 bg-mosque/5 rounded-lg border border-mosque/10">
@@ -148,7 +153,7 @@ export default async function PropertyPage({
                     {property.area}
                   </span>
                   <span className="text-xs uppercase tracking-wider text-nordic/50">
-                    Square Meters
+                    {t('property_detail.sq_meters')}
                   </span>
                 </div>
                 <div className="flex flex-col items-center justify-center p-4 bg-mosque/5 rounded-lg border border-mosque/10">
@@ -159,7 +164,7 @@ export default async function PropertyPage({
                     {property.beds}
                   </span>
                   <span className="text-xs uppercase tracking-wider text-nordic/50">
-                    Bedrooms
+                    {t('property_detail.bedrooms')}
                   </span>
                 </div>
                 <div className="flex flex-col items-center justify-center p-4 bg-mosque/5 rounded-lg border border-mosque/10">
@@ -170,7 +175,7 @@ export default async function PropertyPage({
                     {property.baths}
                   </span>
                   <span className="text-xs uppercase tracking-wider text-nordic/50">
-                    Bathrooms
+                    {t('property_detail.bathrooms')}
                   </span>
                 </div>
                 <div className="flex flex-col items-center justify-center p-4 bg-mosque/5 rounded-lg border border-mosque/10">
@@ -179,7 +184,7 @@ export default async function PropertyPage({
                   </span>
                   <span className="text-xl font-bold text-nordic">1+</span>
                   <span className="text-xs uppercase tracking-wider text-nordic/50">
-                    Garage
+                    {t('property_detail.garage')}
                   </span>
                 </div>
               </div>
@@ -187,25 +192,20 @@ export default async function PropertyPage({
 
             <div className="bg-white p-8 rounded-xl shadow-sm border border-mosque/5">
               <h2 className="text-lg font-semibold mb-4 text-nordic">
-                About this home
+                {t('property_detail.about_title')}
               </h2>
               <div className="prose prose-slate max-w-none text-nordic/70 leading-relaxed">
                 <p className="mb-4">
-                  Experience modern luxury in this architecturally stunning home
-                  located in {property.location}. Designed with an emphasis on
-                  comfort and high standards, the residence features high
-                  quality materials that flood the interiors with natural light.
+                  {t('property_detail.about_description_1')} {property.location}. {t('property_detail.about_description_2')}
                 </p>
                 <p>
-                  This property is perfect for those seeking{" "}
                   {property.type === "rent"
-                    ? "a premium rental experience"
-                    : "a long-term investment"}{" "}
-                  with a magnificent setting.
+                    ? t('property_detail.about_description_rent')
+                    : t('property_detail.about_description_buy')}
                 </p>
               </div>
               <button className="mt-4 text-mosque font-semibold text-sm flex items-center gap-1 hover:gap-2 transition-all cursor-pointer">
-                Read more
+                {t('property_detail.read_more')}
                 <span className="material-icons text-sm">arrow_forward</span>
               </button>
             </div>
@@ -217,19 +217,19 @@ export default async function PropertyPage({
                 </div>
                 <div>
                   <h3 className="font-semibold text-nordic">
-                    Estimated Payment
+                    {t('property_detail.est_payment')}
                   </h3>
                   <p className="text-sm text-nordic/60">
-                    Starting from{" "}
+                    {t('property_detail.starting_from')}{" "}
                     <strong className="text-mosque">
-                      {formatPrice(property.price / 185)}/mo
+                      {formatPrice(property.price / 185)}{t('property.per_month')}
                     </strong>{" "}
-                    with 20% down
+                    {t('property_detail.down_payment')}
                   </p>
                 </div>
               </div>
               <button className="whitespace-nowrap px-4 py-2 bg-white border border-nordic/10 rounded-lg text-sm font-semibold hover:border-mosque transition-colors text-nordic cursor-pointer">
-                Calculate Mortgage
+                {t('property_detail.calc_mortgage')}
               </button>
             </div>
           </div>

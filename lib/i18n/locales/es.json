@@ -1,0 +1,105 @@
+{
+  "nav": {
+    "buy": "Comprar",
+    "rent": "Alquilar",
+    "sell": "Vender",
+    "saved": "Guardados",
+    "search": "Buscar",
+    "notifications": "Notificaciones"
+  },
+  "home": {
+    "hero_title_1": "Encuentra tu",
+    "hero_accent": "santuario",
+    "hero_title_2": ".",
+    "featured_title": "Colecciones Destacadas",
+    "featured_subtitle": "Propiedades seleccionadas para el ojo exigente.",
+    "view_all": "Ver todo",
+    "new_market_title": "Novedades en el Mercado",
+    "new_market_subtitle": "Nuevas oportunidades solo para ti.",
+    "filter_all": "Todo",
+    "filter_buy": "Comprar",
+    "filter_rent": "Alquilar",
+    "search_placeholder": "Busca por ciudad, barrio o dirección...",
+    "search_button": "Buscar",
+    "filters_button": "Filtros",
+    "no_properties": "No se encontraron propiedades que coincidan con tus criterios."
+  },
+  "property_types": {
+    "all": "Todo",
+    "house": "Casa",
+    "apartment": "Apartamento",
+    "villa": "Villa",
+    "penthouse": "Ático"
+  },
+  "property": {
+    "beds": "Habitaciones",
+    "baths": "Baños",
+    "area": "m²",
+    "for_sale": "EN VENTA",
+    "for_rent": "EN ALQUILER",
+    "per_month": "/mes"
+  },
+  "property_detail": {
+    "agent_title": "Agente de LuxeEstate",
+    "top_rated": "Agente Mejor Valorado",
+    "schedule_visit": "Programar Visita",
+    "contact_agent": "Contactar Agente",
+    "features_title": "Características de la Propiedad",
+    "sq_meters": "Metros Cuadrados",
+    "bedrooms": "Habitaciones",
+    "bathrooms": "Baños",
+    "garage": "Garaje",
+    "about_title": "Sobre esta casa",
+    "read_more": "Leer más",
+    "est_payment": "Pago Estimado",
+    "starting_from": "Desde",
+    "down_payment": "con 20% de entrada",
+    "calc_mortgage": "Calcular Hipoteca",
+    "about_description_1": "Experimente el lujo moderno en esta casa arquitectónicamente impresionante ubicada en",
+    "about_description_2": "Diseñada con énfasis en la comodidad y los altos estándares, la residencia cuenta con materiales de alta calidad que inundan los interiores con luz natural.",
+    "about_description_rent": "Esta propiedad es perfecta para aquellos que buscan una experiencia de alquiler premium en un entorno magnífico.",
+    "about_description_buy": "Esta propiedad es perfecta para aquellos que buscan una inversión a largo plazo en un entorno magnífico."
+  },
+  "filters": {
+    "title": "Filtros",
+    "location": "Ubicación",
+    "location_placeholder": "Ciudad, barrio o dirección",
+    "price_range": "Rango de Precios",
+    "min_price": "Precio Mínimo",
+    "max_price": "Precio Máximo",
+    "any": "Cualquiera",
+    "property_type": "Tipo de Propiedad",
+    "any_type": "Cualquier Tipo",
+    "bedrooms": "Habitaciones",
+    "bathrooms": "Baños",
+    "amenities": "Comodidades y Características",
+    "clear_all": "Limpiar todos los filtros",
+    "show_properties": "Mostrar Propiedades",
+    "pool": "Piscina",
+    "gym": "Gimnasio",
+    "parking": "Aparcamiento",
+    "ac": "Aire Acondicionado",
+    "wifi": "Wifi",
+    "patio": "Patio"
+  },
+  "pagination": {
+    "prev": "Anterior",
+    "next": "Siguiente"
+  },
+  "property_status": {
+    "exclusive": "Exclusivo",
+    "new_arrival": "Recién Llegado"
+  },
+  "gallery": {
+    "view_all": "Ver Todas las Fotos"
+  },
+  "map": {
+    "view_on_map": "Ver en el Mapa"
+  },
+  "common": {
+    "language": "Idioma",
+    "en": "Inglés",
+    "es": "Español",
+    "fr": "Francés"
+  }
+}

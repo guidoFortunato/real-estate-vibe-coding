@@ -1,0 +1,105 @@
+{
+  "nav": {
+    "buy": "Acheter",
+    "rent": "Louer",
+    "sell": "Vendre",
+    "saved": "Enregistrés",
+    "search": "Chercher",
+    "notifications": "Notifications"
+  },
+  "home": {
+    "hero_title_1": "Trouvez votre",
+    "hero_accent": "sanctuaire",
+    "hero_title_2": ".",
+    "featured_title": "Collections Vedettes",
+    "featured_subtitle": "Des propriétés curatées pour l'œil averti.",
+    "view_all": "Voir tout",
+    "new_market_title": "Nouveau sur le Marché",
+    "new_market_subtitle": "De nouvelles opportunités rien que pour vous.",
+    "filter_all": "Tous",
+    "filter_buy": "Acheter",
+    "filter_rent": "Louer",
+    "search_placeholder": "Recherche par ville, quartier ou adresse...",
+    "search_button": "Chercher",
+    "filters_button": "Filtres",
+    "no_properties": "Aucune propriété trouvée correspondant à vos critères."
+  },
+  "property_types": {
+    "all": "Tous",
+    "house": "Maison",
+    "apartment": "Appartement",
+    "villa": "Villa",
+    "penthouse": "Penthouse"
+  },
+  "property": {
+    "beds": "Chambres",
+    "baths": "Salles de bain",
+    "area": "m²",
+    "for_sale": "À VENDRE",
+    "for_rent": "À LOUER",
+    "per_month": "/mois"
+  },
+  "property_detail": {
+    "agent_title": "Agent LuxeEstate",
+    "top_rated": "Agent le mieux noté",
+    "schedule_visit": "Planifier une visite",
+    "contact_agent": "Contacter l'agent",
+    "features_title": "Caractéristiques de la propriété",
+    "sq_meters": "Mètres carrés",
+    "bedrooms": "Chambres",
+    "bathrooms": "Salles de bain",
+    "garage": "Garage",
+    "about_title": "À propos de cette maison",
+    "read_more": "Lire la suite",
+    "est_payment": "Paiement estimé",
+    "starting_from": "À partir de",
+    "down_payment": "avec 20% d'acompte",
+    "calc_mortgage": "Calculer l'hypothèque",
+    "about_description_1": "Découvrez le luxe moderne dans cette maison à l'architecture époustouflante située à",
+    "about_description_2": "Conçue en mettant l'accent sur le confort et les normes élevées, la résidence présente des matériaux de haute qualité qui inondent les intérieurs de lumière naturelle.",
+    "about_description_rent": "Cette propriété est parfaite pour ceux qui recherchent une expérience de location premium dans un cadre magnifique.",
+    "about_description_buy": "Cette propriété est parfaite pour ceux qui recherchent un investissement à long terme dans un cadre magnifique."
+  },
+  "filters": {
+    "title": "Filtres",
+    "location": "Emplacement",
+    "location_placeholder": "Ville, quartier ou adresse",
+    "price_range": "Fourchette de prix",
+    "min_price": "Prix Min",
+    "max_price": "Prix Max",
+    "any": "Tous",
+    "property_type": "Type de propriété",
+    "any_type": "Tous les types",
+    "bedrooms": "Chambres",
+    "bathrooms": "Salles de bain",
+    "amenities": "Équipements et caractéristiques",
+    "clear_all": "Effacer tous les filtres",
+    "show_properties": "Afficher les propriétés",
+    "pool": "Piscine",
+    "gym": "Salle de sport",
+    "parking": "Parking",
+    "ac": "Climatisation",
+    "wifi": "Wifi",
+    "patio": "Patio"
+  },
+  "pagination": {
+    "prev": "Précédent",
+    "next": "Suivant"
+  },
+  "property_status": {
+    "exclusive": "Exclusif",
+    "new_arrival": "Nouveauté"
+  },
+  "gallery": {
+    "view_all": "Voir toutes les photos"
+  },
+  "map": {
+    "view_on_map": "Voir sur la carte"
+  },
+  "common": {
+    "language": "Langue",
+    "en": "Anglais",
+    "es": "Espagnol",
+    "fr": "Français"
+  }
+}

@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { useTranslation } from "../hooks/useTranslation";
 
 export function PropertyGallery({
   images,
@@ -12,6 +13,7 @@ export function PropertyGallery({
   title: string;
   status: string;
 }) {
+  const { t } = useTranslation();
   const [activeImage, setActiveImage] = useState(0);
   const fallbackImages = [
     "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&q=80&w=1000",
@@ -33,6 +35,14 @@ export function PropertyGallery({
   const validImages = currentImages.filter((img) => img && img.trim() !== "");
   const safeSrc = validImages[activeImage] ?? validImages[0] ?? "";
 
+  const getStatusLabel = (s: string) => {
+    switch (s) {
+      case "Exclusive": return t('property_status.exclusive');
+      case "New Arrival": return t('property_status.new_arrival');
+      default: return s;
+    }
+  };
+
   return (
     <>
       {/* ─── Main image ─────────────────────────────────────── */}
@@ -49,13 +59,13 @@ export function PropertyGallery({
         <div className="absolute top-4 left-4 flex gap-2">
           {status !== "Standard" && (
             <span className="bg-mosque text-white text-xs font-medium px-3 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
-              {status}
+              {getStatusLabel(status)}
             </span>
           )}
         </div>
         <button className="absolute bottom-4 right-4 bg-white/90 hover:bg-white text-nordic px-4 py-2 rounded-lg text-sm font-medium shadow-lg backdrop-blur transition-all flex items-center gap-2 cursor-pointer">
           <span className="material-icons text-sm">grid_view</span>
-          View All Photos
+          {t('gallery.view_all')}
         </button>
       </div>
 

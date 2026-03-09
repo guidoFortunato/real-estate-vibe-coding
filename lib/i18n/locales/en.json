@@ -1,0 +1,105 @@
+{
+  "nav": {
+    "buy": "Buy",
+    "rent": "Rent",
+    "sell": "Sell",
+    "saved": "Saved Homes",
+    "search": "Search",
+    "notifications": "Notifications"
+  },
+  "home": {
+    "hero_title_1": "Find your",
+    "hero_accent": "sanctuary",
+    "hero_title_2": ".",
+    "featured_title": "Featured Collections",
+    "featured_subtitle": "Curated properties for the discerning eye.",
+    "view_all": "View all",
+    "new_market_title": "New in Market",
+    "new_market_subtitle": "Fresh opportunities just for you.",
+    "filter_all": "All",
+    "filter_buy": "Buy",
+    "filter_rent": "Rent",
+    "search_placeholder": "Search by city, neighborhood, or address...",
+    "search_button": "Search",
+    "filters_button": "Filters",
+    "no_properties": "No properties found matching your criteria."
+  },
+  "property_types": {
+    "all": "All",
+    "house": "House",
+    "apartment": "Apartment",
+    "villa": "Villa",
+    "penthouse": "Penthouse"
+  },
+  "property": {
+    "beds": "Beds",
+    "baths": "Baths",
+    "area": "m²",
+    "for_sale": "FOR SALE",
+    "for_rent": "FOR RENT",
+    "per_month": "/mo"
+  },
+  "property_detail": {
+    "agent_title": "LuxeEstate Agent",
+    "top_rated": "Top Rated Agent",
+    "schedule_visit": "Schedule Visit",
+    "contact_agent": "Contact Agent",
+    "features_title": "Property Features",
+    "sq_meters": "Square Meters",
+    "bedrooms": "Bedrooms",
+    "bathrooms": "Bathrooms",
+    "garage": "Garage",
+    "about_title": "About this home",
+    "read_more": "Read more",
+    "est_payment": "Estimated Payment",
+    "starting_from": "Starting from",
+    "down_payment": "with 20% down",
+    "calc_mortgage": "Calculate Mortgage",
+    "about_description_1": "Experience modern luxury in this architecturally stunning home located in",
+    "about_description_2": "Designed with an emphasis on comfort and high standards, the residence features high quality materials that flood the interiors with natural light.",
+    "about_description_rent": "This property is perfect for those seeking a premium rental experience with a magnificent setting.",
+    "about_description_buy": "This property is perfect for those seeking a long-term investment with a magnificent setting."
+  },
+  "filters": {
+    "title": "Filters",
+    "location": "Location",
+    "location_placeholder": "City, neighborhood, or address",
+    "price_range": "Price Range",
+    "min_price": "Min Price",
+    "max_price": "Max Price",
+    "any": "Any",
+    "property_type": "Property Type",
+    "any_type": "Any Type",
+    "bedrooms": "Bedrooms",
+    "bathrooms": "Bathrooms",
+    "amenities": "Amenities & Features",
+    "clear_all": "Clear all filters",
+    "show_properties": "Show Properties",
+    "pool": "Swimming Pool",
+    "gym": "Gym",
+    "parking": "Parking",
+    "ac": "Air Conditioning",
+    "wifi": "Wifi",
+    "patio": "Patio"
+  },
+  "pagination": {
+    "prev": "Prev",
+    "next": "Next"
+  },
+  "property_status": {
+    "exclusive": "Exclusive",
+    "new_arrival": "New Arrival"
+  },
+  "gallery": {
+    "view_all": "View All Photos"
+  },
+  "map": {
+    "view_on_map": "View on Map"
+  },
+  "common": {
+    "language": "Language",
+    "en": "English",
+    "es": "Spanish",
+    "fr": "French"
+  }
+}

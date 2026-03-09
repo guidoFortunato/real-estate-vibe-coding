@@ -4,6 +4,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Property } from "../lib/properties";
+import { useTranslation } from "../hooks/useTranslation";
 
 interface PropertyCardProps {
   property: Property;
@@ -14,6 +15,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
   property,
   featuredDesign = false,
 }) => {
+  const { t, locale } = useTranslation();
   const [mounted, setMounted] = React.useState(false);
   const [imgSrc, setImgSrc] = React.useState(property.images?.[0] || "");
   
@@ -29,7 +31,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
   }, []);
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-US", {
+    return new Intl.NumberFormat(locale === 'en' ? 'en-US' : locale === 'es' ? 'es-ES' : 'fr-FR', {
       style: "currency",
       currency: "USD",
       maximumFractionDigits: 0,
@@ -38,7 +40,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
 
   const formatArea = (area: number) => {
     if (!mounted) return area.toString(); // Simple string for SSR
-    return area.toLocaleString("en-US"); // Formatted for Client
+    return area.toLocaleString(locale === 'en' ? 'en-US' : locale === 'es' ? 'es-ES' : 'fr-FR'); // Formatted for Client
   };
 
   const handleImageError = () => {
@@ -89,15 +91,15 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
           <div className="flex items-center gap-6 mt-6 pt-6 border-t border-nordic-dark/5">
             <div className="flex items-center gap-2 text-nordic-muted text-sm">
               <span className="material-icons text-lg">king_bed</span>{" "}
-              {property.beds} Beds
+              {property.beds} {t('property.beds')}
             </div>
             <div className="flex items-center gap-2 text-nordic-muted text-sm">
               <span className="material-icons text-lg">bathtub</span>{" "}
-              {property.baths} Baths
+              {property.baths} {t('property.baths')}
             </div>
             <div className="flex items-center gap-2 text-nordic-muted text-sm shadow-none">
               <span className="material-icons text-lg">square_foot</span>{" "}
-              {formatArea(property.area)} m²
+              {formatArea(property.area)} {t('property.area')}
             </div>
           </div>
         </div>
@@ -125,7 +127,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
         <div
           className={`absolute bottom-3 left-3 text-white text-xs font-bold px-2 py-1 rounded ${property.type === "rent" ? "bg-mosque/90" : "bg-nordic-dark/90"}`}
         >
-          FOR {property.type.toUpperCase()}
+          {property.type === 'rent' ? t('property.for_rent') : t('property.for_sale')}
         </div>
       </div>
 
@@ -134,7 +136,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
           <h3 className="font-bold text-lg text-nordic-dark">
             {formatPrice(property.price)}
             {property.price_per_month && (
-              <span className="text-sm font-normal text-nordic-muted">/mo</span>
+              <span className="text-sm font-normal text-nordic-muted">{t('property.per_month')}</span>
             )}
           </h3>
         </div>
@@ -160,7 +162,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
             <span className="material-icons text-sm text-mosque/80">
               square_foot
             </span>{" "}
-            {formatArea(property.area)}m²
+            {formatArea(property.area)}{t('property.area')}
           </div>
         </div>
       </div>

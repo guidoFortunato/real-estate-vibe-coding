@@ -4,6 +4,9 @@ import { PropertyCard } from "../components/PropertyCard";
 import { FilterPills } from "../components/FilterPills";
 import { Pagination } from "../components/Pagination";
 import { getProperties, GetPropertiesOptions } from "../lib/properties";
+import { cookies } from "next/headers";
+import { COOKIE_NAME, Locale, defaultLocale } from "../lib/i18n/i18n-config";
+import { getTranslation } from "../lib/i18n/translations";
 
 const PAGE_SIZE = 6;
 
@@ -46,6 +49,7 @@ function GridSkeleton() {
 // SERVER COMPONENTS DATA-FETCHERS
 
 import { SearchInput } from "../components/SearchInput";
+import { HeroTitle } from "../components/HeroTitle";
 
 async function FeaturedCollection() {
   const result = await getProperties({ 
@@ -72,8 +76,10 @@ async function FeaturedCollection() {
 
 async function NewInMarketCollection({
   searchParams,
+  t,
 }: {
   searchParams: GetPropertiesOptions;
+  t: (key: string) => string;
 }) {
   const { page = 1, type = "all", ...filters } = searchParams;
   
@@ -111,7 +117,7 @@ async function NewInMarketCollection({
           ))
         ) : (
           <p className="col-span-full text-center text-nordic-muted py-12">
-            No properties found matching your criteria.
+            {t('home.no_properties')}
           </p>
         )}
       </div>
@@ -140,6 +146,10 @@ interface HomeProps {
 
 export default async function Home({ searchParams }: HomeProps) {
   const params = await searchParams;
+  const cookieStore = await cookies();
+  const locale = (cookieStore.get(COOKIE_NAME)?.value as Locale) || defaultLocale;
+  const t = (key: string) => getTranslation(locale, key);
+
   const options: GetPropertiesOptions = {
     page: Math.max(1, parseInt(params.page ?? "1", 10)),
     type: (params.type as "sale" | "rent" | "all") ?? "all",
@@ -171,14 +181,7 @@ export default async function Home({ searchParams }: HomeProps) {
         {/* HERO SECTION */}
         <section className="py-12 md:py-16">
           <div className="max-w-3xl mx-auto text-center space-y-8">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-light text-nordic-dark leading-tight">
-              Find your{" "}
-              <span className="relative inline-block">
-                <span className="relative z-10 font-medium">sanctuary</span>
-                <span className="absolute bottom-2 left-0 w-full h-3 bg-mosque/20 -rotate-1 z-0"></span>
-              </span>
-              .
-            </h1>
+            <HeroTitle />
 
             <SearchInput />
 
@@ -192,17 +195,17 @@ export default async function Home({ searchParams }: HomeProps) {
             <div className="flex items-end justify-between mb-8">
               <div>
                 <h2 className="text-2xl font-light text-nordic-dark">
-                  Featured Collections
+                  {t('home.featured_title')}
                 </h2>
                 <p className="text-nordic-muted mt-1 text-sm">
-                  Curated properties for the discerning eye.
+                  {t('home.featured_subtitle')}
                 </p>
               </div>
               <a
                 className="hidden sm:flex items-center gap-1 text-sm font-medium text-mosque hover:opacity-70 transition-opacity"
                 href="#"
               >
-                View all{" "}
+                {t('home.view_all')}{" "}
                 <span className="material-icons text-sm">arrow_forward</span>
               </a>
             </div>
@@ -218,10 +221,10 @@ export default async function Home({ searchParams }: HomeProps) {
           <div className="flex items-end justify-between mb-8">
             <div>
               <h2 className="text-2xl font-light text-nordic-dark">
-                New in Market
+                {t('home.new_market_title')}
               </h2>
               <p className="text-nordic-muted mt-1 text-sm">
-                Fresh opportunities just for you.
+                {t('home.new_market_subtitle')}
               </p>
             </div>
             <div className="hidden md:flex bg-white p-1 rounded-lg">
@@ -235,7 +238,7 @@ export default async function Home({ searchParams }: HomeProps) {
                 })()}
                 className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${typeFilter === "all" ? "bg-nordic-dark text-white shadow-sm" : "text-nordic-muted hover:text-nordic-dark"}`}
               >
-                All
+                {t('home.filter_all')}
               </a>
               <a
                 href={(() => {
@@ -246,7 +249,7 @@ export default async function Home({ searchParams }: HomeProps) {
                 })()}
                 className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${typeFilter === "sale" ? "bg-nordic-dark text-white shadow-sm" : "text-nordic-muted hover:text-nordic-dark"}`}
               >
-                Buy
+                {t('home.filter_buy')}
               </a>
               <a
                 href={(() => {
@@ -257,7 +260,7 @@ export default async function Home({ searchParams }: HomeProps) {
                 })()}
                 className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${typeFilter === "rent" ? "bg-nordic-dark text-white shadow-sm" : "text-nordic-muted hover:text-nordic-dark"}`}
               >
-                Rent
+                {t('home.filter_rent')}
               </a>
             </div>
           </div>
@@ -265,6 +268,7 @@ export default async function Home({ searchParams }: HomeProps) {
           <Suspense key={JSON.stringify(options)} fallback={<GridSkeleton />}>
             <NewInMarketCollection
               searchParams={options}
+              t={t}
             />
           </Suspense>
         </section>

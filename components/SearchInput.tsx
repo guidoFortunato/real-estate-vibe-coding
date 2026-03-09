@@ -1,11 +1,13 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslation } from "../hooks/useTranslation";
 
 export const SearchInput = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { t } = useTranslation();
   const [searchValue, setSearchValue] = useState(searchParams.get("search") || "");
 
   const handleSearch = () => {
@@ -34,7 +36,7 @@ export const SearchInput = () => {
       </div>
       <input
         className="block w-full pl-12 pr-32 py-4 rounded-xl border-none outline-none outline-nordic-dark/10 bg-white text-nordic-dark shadow-soft placeholder-nordic-muted/60 focus:ring-2 focus:ring-mosque focus:bg-white transition-all text-lg"
-        placeholder="Search by city, neighborhood, or address..."
+        placeholder={t('home.search_placeholder')}
         type="text"
         value={searchValue}
         onChange={(e) => setSearchValue(e.target.value)}
@@ -44,7 +46,7 @@ export const SearchInput = () => {
         onClick={handleSearch}
         className="absolute inset-y-2 right-2 px-6 bg-mosque hover:bg-mosque/90 text-white font-medium rounded-lg transition-colors flex items-center justify-center shadow-lg shadow-mosque/20"
       >
-        Search
+        {t('home.search_button')}
       </button>
     </div>
   );
