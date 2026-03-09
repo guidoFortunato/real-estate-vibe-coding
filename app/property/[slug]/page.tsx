@@ -27,7 +27,7 @@ export async function generateMetadata({
     title: `${property.title} | LuxeEstate`,
     description: `Stunning property located at ${property.location} with ${property.beds} beds and ${property.baths} baths.`,
     openGraph: {
-      images: [property.images ? property.images[0] : property.image_url],
+      images: [property.images?.[0] ?? ''],
     },
   };
 }
@@ -52,10 +52,7 @@ export default async function PropertyPage({
     }).format(price);
   };
 
-  const images =
-    property.images && property.images.length > 0
-      ? property.images
-      : [property.image_url];
+  const images = property.images ?? [];
   const primaryImage = images[0];
 
   return (
@@ -107,12 +104,12 @@ export default async function PropertyPage({
                       <span>Top Rated Agent</span>
                     </div>
                   </div>
-                  <div className="ml-auto flex gap-2">
-                    <button className="p-2 rounded-full bg-mosque/10 text-mosque hover:bg-mosque hover:text-white transition-colors">
-                      <span className="material-icons text-sm">chat</span>
+                  <div className="ml-auto flex items-center gap-2">
+                    <button className="w-9 h-9 flex items-center justify-center rounded-full bg-mosque/10 text-mosque hover:bg-mosque hover:text-white transition-colors cursor-pointer">
+                      <span className="material-icons text-base leading-none">chat</span>
                     </button>
-                    <button className="p-2 rounded-full bg-mosque/10 text-mosque hover:bg-mosque hover:text-white transition-colors">
-                      <span className="material-icons text-sm">call</span>
+                    <button className="w-9 h-9 flex items-center justify-center rounded-full bg-mosque/10 text-mosque hover:bg-mosque hover:text-white transition-colors cursor-pointer">
+                      <span className="material-icons text-base leading-none">call</span>
                     </button>
                   </div>
                 </div>
