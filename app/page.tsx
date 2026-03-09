@@ -55,7 +55,7 @@ async function FeaturedCollection({
   const result = await getProperties({ 
     ...searchParams,
     featuredOnly: true, 
-    pageSize: 100 
+    pageSize: 2 
   });
   const featuredProperties = result.data;
 
@@ -156,6 +156,15 @@ export default async function Home({ searchParams }: HomeProps) {
 
   const typeFilter = options.type || "all";
 
+  const isFiltering = 
+    !!params.search || 
+    !!params.minPrice || 
+    !!params.maxPrice || 
+    !!params.propertyType || 
+    !!params.beds || 
+    !!params.baths ||
+    (params.type && params.type !== "all");
+
   return (
     <div className="min-h-screen bg-background-light font-display">
       <Navbar />
@@ -180,29 +189,31 @@ export default async function Home({ searchParams }: HomeProps) {
         </section>
 
         {/* FEATURED COLLECTIONS SECTION */}
-        <section className="mb-16">
-          <div className="flex items-end justify-between mb-8">
-            <div>
-              <h2 className="text-2xl font-light text-nordic-dark">
-                Featured Collections
-              </h2>
-              <p className="text-nordic-muted mt-1 text-sm">
-                Curated properties for the discerning eye.
-              </p>
+        {!isFiltering && (
+          <section className="mb-16">
+            <div className="flex items-end justify-between mb-8">
+              <div>
+                <h2 className="text-2xl font-light text-nordic-dark">
+                  Featured Collections
+                </h2>
+                <p className="text-nordic-muted mt-1 text-sm">
+                  Curated properties for the discerning eye.
+                </p>
+              </div>
+              <a
+                className="hidden sm:flex items-center gap-1 text-sm font-medium text-mosque hover:opacity-70 transition-opacity"
+                href="#"
+              >
+                View all{" "}
+                <span className="material-icons text-sm">arrow_forward</span>
+              </a>
             </div>
-            <a
-              className="hidden sm:flex items-center gap-1 text-sm font-medium text-mosque hover:opacity-70 transition-opacity"
-              href="#"
-            >
-              View all{" "}
-              <span className="material-icons text-sm">arrow_forward</span>
-            </a>
-          </div>
 
-          <Suspense fallback={<FeaturedSkeleton />}>
-            <FeaturedCollection searchParams={options} />
-          </Suspense>
-        </section>
+            <Suspense fallback={<FeaturedSkeleton />}>
+              <FeaturedCollection searchParams={options} />
+            </Suspense>
+          </section>
+        )}
 
         {/* NEW IN MARKET SECTION */}
         <section>

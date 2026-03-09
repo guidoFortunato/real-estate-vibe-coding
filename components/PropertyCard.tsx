@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -12,12 +14,36 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
   property,
   featuredDesign = false,
 }) => {
+  const [mounted, setMounted] = React.useState(false);
+  const [imgSrc, setImgSrc] = React.useState(property.images?.[0] || "");
+  
+  const fallbackImages = [
+    "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&q=80&w=1000",
+    "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=1000",
+    "https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&q=80&w=1000",
+    "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&q=80&w=1000",
+  ];
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
       maximumFractionDigits: 0,
     }).format(price);
+  };
+
+  const formatArea = (area: number) => {
+    if (!mounted) return area.toString(); // Simple string for SSR
+    return area.toLocaleString("en-US"); // Formatted for Client
+  };
+
+  const handleImageError = () => {
+    const randomIndex = Math.floor(Math.random() * fallbackImages.length);
+    setImgSrc(fallbackImages[randomIndex]);
   };
 
   if (featuredDesign) {
@@ -30,14 +56,15 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
           <Image
             alt={property.title}
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-            src={property.images[0]}
+            src={imgSrc}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            onError={handleImageError}
           />
           <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider text-nordic-dark">
             {property.status}
           </div>
-          <button className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-nordic-dark hover:bg-mosque hover:text-white transition-all">
+          <button className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-nordic-dark hover:bg-mosque hover:text-white transition-all shadow-sm">
             <span className="material-icons text-xl">favorite_border</span>
           </button>
           <div className="absolute bottom-0 inset-x-0 h-1/2 bg-linear-to-t from-black/60 to-transparent opacity-60"></div>
@@ -68,9 +95,9 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
               <span className="material-icons text-lg">bathtub</span>{" "}
               {property.baths} Baths
             </div>
-            <div className="flex items-center gap-2 text-nordic-muted text-sm">
+            <div className="flex items-center gap-2 text-nordic-muted text-sm shadow-none">
               <span className="material-icons text-lg">square_foot</span>{" "}
-              {property.area.toLocaleString()} m²
+              {formatArea(property.area)} m²
             </div>
           </div>
         </div>
@@ -87,12 +114,13 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
         <Image
           alt={property.title}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-          src={property.images[0]}
+          src={imgSrc}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          onError={handleImageError}
         />
-        <button className="absolute top-3 right-3 p-2 bg-white/90 rounded-full hover:bg-mosque hover:text-white transition-colors text-nordic-dark">
-          <span className="material-icons text-lg">favorite_border</span>
+        <button className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-nordic-dark hover:bg-mosque hover:text-white transition-all shadow-sm">
+          <span className="material-icons text-xl">favorite_border</span>
         </button>
         <div
           className={`absolute bottom-3 left-3 text-white text-xs font-bold px-2 py-1 rounded ${property.type === "rent" ? "bg-mosque/90" : "bg-nordic-dark/90"}`}
@@ -132,7 +160,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
             <span className="material-icons text-sm text-mosque/80">
               square_foot
             </span>{" "}
-            {property.area}m²
+            {formatArea(property.area)}m²
           </div>
         </div>
       </div>

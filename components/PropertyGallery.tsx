@@ -13,21 +13,25 @@ export function PropertyGallery({
   status: string;
 }) {
   const [activeImage, setActiveImage] = useState(0);
-  // Track which thumbnails failed to load so we skip them
-  const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
+  const fallbackImages = [
+    "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&q=80&w=1000",
+    "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=1000",
+    "https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&q=80&w=1000",
+    "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&q=80&w=1000",
+  ];
 
-  const validImages = images.filter((img) => img && img.trim() !== "");
+  // Map original images to their current state (either original or fallback)
+  const [currentImages, setCurrentImages] = useState(images);
 
-  // Build the displayed list — replace failed ones with a null so we can skip them
-  const displayImages = validImages.filter((_, idx) => !failedImages.has(idx));
-
-  const safeSrc = validImages[activeImage] ?? validImages[0] ?? "";
-
-  const handleThumbnailError = (originalIdx: number) => {
-    setFailedImages((prev) => new Set(prev).add(originalIdx));
-    // If the active image fails, fall back to the first one
-    if (activeImage === originalIdx) setActiveImage(0);
+  const handleImageError = (index: number) => {
+    const randomIndex = Math.floor(Math.random() * fallbackImages.length);
+    const newImages = [...currentImages];
+    newImages[index] = fallbackImages[randomIndex];
+    setCurrentImages(newImages);
   };
+
+  const validImages = currentImages.filter((img) => img && img.trim() !== "");
+  const safeSrc = validImages[activeImage] ?? validImages[0] ?? "";
 
   return (
     <>
@@ -40,6 +44,7 @@ export function PropertyGallery({
           priority
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           sizes="(max-width: 1024px) 100vw, 66vw"
+          onError={() => handleImageError(activeImage)}
         />
         <div className="absolute top-4 left-4 flex gap-2">
           {status !== "Standard" && (
@@ -66,9 +71,6 @@ export function PropertyGallery({
           }}
         >
           {validImages.map((img, idx) => {
-            // Skip images that failed to load
-            if (failedImages.has(idx)) return null;
-
             const isActive = activeImage === idx;
 
             return (
@@ -90,7 +92,7 @@ export function PropertyGallery({
                     fill
                     sizes="176px"
                     className="w-full h-full object-cover"
-                    onError={() => handleThumbnailError(idx)}
+                    onError={() => handleImageError(idx)}
                   />
                 </div>
               </button>
