@@ -58,10 +58,6 @@ export async function getProperties({
 
   if (featuredOnly) {
     query = query.eq("featured", true);
-  } else {
-    // If not specifically asking for featured, we might still want to show them in the general list?
-    // Actually, usually home screens separate them. The current page.tsx does this.
-    query = query.eq("featured", false);
   }
 
   if (type && type !== "all") {
@@ -84,18 +80,23 @@ export async function getProperties({
     query = query.gte("baths", baths);
   }
 
-  if (propertyType && propertyType !== "Any Type" && propertyType !== "All") {
-    query = query.ilike("title", `%${propertyType}%`); // Rough approximation since we don't have a strict category column yet, or we could add one.
+  if (propertyType && propertyType !== "Any Type" && propertyType !== "All" && propertyType.trim() !== "") {
+    query = query.ilike("title", `%${propertyType}%`);
   }
 
-  if (search) {
+  if (search && search.trim() !== "") {
     query = query.or(`title.ilike.%${search}%,location.ilike.%${search}%`);
   }
 
   const { data, error, count } = await query.range(from, to);
 
   if (error) {
-    console.error("Error fetching properties:", error.message);
+    // PostgREST 416: Requested range not satisfiable (happens when page is too high)
+    if (error.code === 'PGRST103') {
+      return { data: [], count: count ?? 0, totalPages: Math.ceil((count ?? 0) / pageSize) };
+    }
+    
+    console.error("Supabase Error detail:", error);
     return { data: [], count: 0, totalPages: 0 };
   }
 

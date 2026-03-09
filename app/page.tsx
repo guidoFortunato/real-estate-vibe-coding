@@ -47,15 +47,11 @@ function GridSkeleton() {
 
 import { SearchInput } from "../components/SearchInput";
 
-async function FeaturedCollection({
-  searchParams,
-}: {
-  searchParams: GetPropertiesOptions;
-}) {
+async function FeaturedCollection() {
   const result = await getProperties({ 
-    ...searchParams,
     featuredOnly: true, 
-    pageSize: 2 
+    pageSize: 2,
+    page: 1 
   });
   const featuredProperties = result.data;
 
@@ -99,7 +95,8 @@ async function NewInMarketCollection({
       params.set(key, value.toString());
     }
   });
-  const baseUrl = `/?${params.toString()}`;
+  const searchParamsString = params.toString();
+  const baseUrl = searchParamsString ? `/?${searchParamsString}` : "/";
 
   return (
     <>
@@ -163,7 +160,8 @@ export default async function Home({ searchParams }: HomeProps) {
     !!params.propertyType || 
     !!params.beds || 
     !!params.baths ||
-    (params.type && params.type !== "all");
+    (params.type && params.type !== "all") ||
+    (options.page ?? 1) > 1;
 
   return (
     <div className="min-h-screen bg-background-light font-display">
@@ -210,7 +208,7 @@ export default async function Home({ searchParams }: HomeProps) {
             </div>
 
             <Suspense fallback={<FeaturedSkeleton />}>
-              <FeaturedCollection searchParams={options} />
+              <FeaturedCollection />
             </Suspense>
           </section>
         )}

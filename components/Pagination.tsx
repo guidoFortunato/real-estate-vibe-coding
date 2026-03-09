@@ -9,7 +9,10 @@ interface PaginationProps {
 export function Pagination({ currentPage, totalPages, baseUrl = '/' }: PaginationProps) {
   if (totalPages <= 1) return null;
 
-  const getHref = (page: number) => `${baseUrl}?page=${page}`;
+  const getHref = (page: number) => {
+    const hasQuery = baseUrl.includes('?');
+    return `${baseUrl}${hasQuery ? '&' : '?'}page=${page}`;
+  };
 
   // Build the page number array, with ellipsis logic
   const getPageNumbers = (): (number | '...')[] => {
