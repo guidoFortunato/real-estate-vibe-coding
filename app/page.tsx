@@ -3,7 +3,7 @@ import { Navbar } from "../components/Navbar";
 import { PropertyCard } from "../components/PropertyCard";
 import { FilterPills } from "../components/FilterPills";
 import { Pagination } from "../components/Pagination";
-import { getProperties } from "../lib/properties";
+import { getProperties, GetPropertiesOptions } from "../lib/properties";
 
 const PAGE_SIZE = 6;
 
@@ -45,9 +45,21 @@ function GridSkeleton() {
 
 // SERVER COMPONENTS DATA-FETCHERS
 
-async function FeaturedCollection() {
-  const result = await getProperties({ featuredOnly: true, pageSize: 100 });
+import { SearchInput } from "../components/SearchInput";
+
+async function FeaturedCollection({
+  searchParams,
+}: {
+  searchParams: GetPropertiesOptions;
+}) {
+  const result = await getProperties({ 
+    ...searchParams,
+    featuredOnly: true, 
+    pageSize: 100 
+  });
   const featuredProperties = result.data;
+
+  if (featuredProperties.length === 0) return null;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -63,21 +75,31 @@ async function FeaturedCollection() {
 }
 
 async function NewInMarketCollection({
-  currentPage,
-  typeFilter,
+  searchParams,
 }: {
-  currentPage: number;
-  typeFilter: "sale" | "rent" | "all";
+  searchParams: GetPropertiesOptions;
 }) {
+  const { page = 1, type = "all", ...filters } = searchParams;
+  
   const propertiesResult = await getProperties({
-    page: currentPage,
+    page,
     pageSize: PAGE_SIZE,
-    type: typeFilter,
+    type,
     featuredOnly: false,
+    ...filters,
   });
 
   const newProperties = propertiesResult.data;
   const { totalPages } = propertiesResult;
+
+  // Build base URL for pagination that preserves other filters
+  const params = new URLSearchParams();
+  Object.entries(searchParams).forEach(([key, value]) => {
+    if (key !== "page" && value !== undefined && value !== null) {
+      params.set(key, value.toString());
+    }
+  });
+  const baseUrl = `/?${params.toString()}`;
 
   return (
     <>
@@ -92,28 +114,47 @@ async function NewInMarketCollection({
           ))
         ) : (
           <p className="col-span-full text-center text-nordic-muted py-12">
-            No properties found.
+            No properties found matching your criteria.
           </p>
         )}
       </div>
 
       <Pagination
-        currentPage={currentPage}
+        currentPage={page}
         totalPages={totalPages}
-        baseUrl={typeFilter !== "all" ? `/?type=${typeFilter}` : "/"}
+        baseUrl={baseUrl}
       />
     </>
   );
 }
 
 interface HomeProps {
-  searchParams: Promise<{ page?: string; type?: string }>;
+  searchParams: Promise<{ 
+    page?: string; 
+    type?: string;
+    search?: string;
+    minPrice?: string;
+    maxPrice?: string;
+    propertyType?: string;
+    beds?: string;
+    baths?: string;
+  }>;
 }
 
 export default async function Home({ searchParams }: HomeProps) {
   const params = await searchParams;
-  const currentPage = Math.max(1, parseInt(params.page ?? "1", 10));
-  const typeFilter = (params.type as "sale" | "rent" | "all") ?? "all";
+  const options: GetPropertiesOptions = {
+    page: Math.max(1, parseInt(params.page ?? "1", 10)),
+    type: (params.type as "sale" | "rent" | "all") ?? "all",
+    search: params.search,
+    minPrice: params.minPrice ? parseInt(params.minPrice, 10) : undefined,
+    maxPrice: params.maxPrice ? parseInt(params.maxPrice, 10) : undefined,
+    propertyType: params.propertyType,
+    beds: params.beds ? parseInt(params.beds, 10) : undefined,
+    baths: params.baths ? parseInt(params.baths, 10) : undefined,
+  };
+
+  const typeFilter = options.type || "all";
 
   return (
     <div className="min-h-screen bg-background-light font-display">
@@ -132,21 +173,7 @@ export default async function Home({ searchParams }: HomeProps) {
               .
             </h1>
 
-            <div className="relative group max-w-2xl mx-auto">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <span className="material-icons text-nordic-muted text-2xl group-focus-within:text-mosque transition-colors">
-                  search
-                </span>
-              </div>
-              <input
-                className="block w-full pl-12 pr-32 py-4 rounded-xl border-none outline-none outline-nordic-dark/10 bg-white text-nordic-dark shadow-soft placeholder-nordic-muted/60 focus:ring-2 focus:ring-mosque focus:bg-white transition-all text-lg"
-                placeholder="Search by city, neighborhood, or address..."
-                type="text"
-              />
-              <button className="absolute inset-y-2 right-2 px-6 bg-mosque hover:bg-mosque/90 text-white font-medium rounded-lg transition-colors flex items-center justify-center shadow-lg shadow-mosque/20">
-                Search
-              </button>
-            </div>
+            <SearchInput />
 
             <FilterPills />
           </div>
@@ -173,7 +200,7 @@ export default async function Home({ searchParams }: HomeProps) {
           </div>
 
           <Suspense fallback={<FeaturedSkeleton />}>
-            <FeaturedCollection />
+            <FeaturedCollection searchParams={options} />
           </Suspense>
         </section>
 
@@ -190,19 +217,35 @@ export default async function Home({ searchParams }: HomeProps) {
             </div>
             <div className="hidden md:flex bg-white p-1 rounded-lg">
               <a
-                href="/?page=1"
+                href={(() => {
+                  const p = new URLSearchParams();
+                  Object.entries(params).forEach(([k, v]) => { if (k !== "page" && v !== undefined && v !== null) p.set(k, v); });
+                  p.delete("type");
+                  const qs = p.toString();
+                  return qs ? `/?${qs}` : "/";
+                })()}
                 className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${typeFilter === "all" ? "bg-nordic-dark text-white shadow-sm" : "text-nordic-muted hover:text-nordic-dark"}`}
               >
                 All
               </a>
               <a
-                href="/?page=1&type=sale"
+                href={(() => {
+                  const p = new URLSearchParams();
+                  Object.entries(params).forEach(([k, v]) => { if (k !== "page" && v !== undefined && v !== null) p.set(k, v); });
+                  p.set("type", "sale");
+                  return `/?${p.toString()}`;
+                })()}
                 className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${typeFilter === "sale" ? "bg-nordic-dark text-white shadow-sm" : "text-nordic-muted hover:text-nordic-dark"}`}
               >
                 Buy
               </a>
               <a
-                href="/?page=1&type=rent"
+                href={(() => {
+                  const p = new URLSearchParams();
+                  Object.entries(params).forEach(([k, v]) => { if (k !== "page" && v !== undefined && v !== null) p.set(k, v); });
+                  p.set("type", "rent");
+                  return `/?${p.toString()}`;
+                })()}
                 className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${typeFilter === "rent" ? "bg-nordic-dark text-white shadow-sm" : "text-nordic-muted hover:text-nordic-dark"}`}
               >
                 Rent
@@ -210,10 +253,9 @@ export default async function Home({ searchParams }: HomeProps) {
             </div>
           </div>
 
-          <Suspense key={`${currentPage}-${typeFilter}`} fallback={<GridSkeleton />}>
+          <Suspense key={JSON.stringify(options)} fallback={<GridSkeleton />}>
             <NewInMarketCollection
-              currentPage={currentPage}
-              typeFilter={typeFilter}
+              searchParams={options}
             />
           </Suspense>
         </section>

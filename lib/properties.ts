@@ -22,6 +22,12 @@ export interface GetPropertiesOptions {
   pageSize?: number;
   type?: "sale" | "rent" | "all";
   featuredOnly?: boolean;
+  minPrice?: number;
+  maxPrice?: number;
+  beds?: number;
+  baths?: number;
+  search?: string;
+  propertyType?: string;
 }
 
 export interface GetPropertiesResult {
@@ -35,6 +41,12 @@ export async function getProperties({
   pageSize = 6,
   type = "all",
   featuredOnly = false,
+  minPrice,
+  maxPrice,
+  beds,
+  baths,
+  search,
+  propertyType,
 }: GetPropertiesOptions = {}): Promise<GetPropertiesResult> {
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
@@ -42,16 +54,42 @@ export async function getProperties({
   let query = supabase
     .from("properties")
     .select("*", { count: "exact" })
-    .order("created_at", { ascending: true });
+    .order("created_at", { ascending: false });
 
   if (featuredOnly) {
     query = query.eq("featured", true);
   } else {
+    // If not specifically asking for featured, we might still want to show them in the general list?
+    // Actually, usually home screens separate them. The current page.tsx does this.
     query = query.eq("featured", false);
   }
 
   if (type && type !== "all") {
     query = query.eq("type", type);
+  }
+
+  if (minPrice !== undefined) {
+    query = query.gte("price", minPrice);
+  }
+
+  if (maxPrice !== undefined) {
+    query = query.lte("price", maxPrice);
+  }
+
+  if (beds !== undefined && beds > 0) {
+    query = query.gte("beds", beds);
+  }
+
+  if (baths !== undefined && baths > 0) {
+    query = query.gte("baths", baths);
+  }
+
+  if (propertyType && propertyType !== "Any Type" && propertyType !== "All") {
+    query = query.ilike("title", `%${propertyType}%`); // Rough approximation since we don't have a strict category column yet, or we could add one.
+  }
+
+  if (search) {
+    query = query.or(`title.ilike.%${search}%,location.ilike.%${search}%`);
   }
 
   const { data, error, count } = await query.range(from, to);
