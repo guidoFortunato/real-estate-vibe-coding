@@ -1,11 +1,11 @@
 "use client";
 
-import Link from 'next/link';
-import { useTranslation } from '../hooks/useTranslation';
-import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
-import type { User } from '@supabase/supabase-js';
-import { LanguageSelector } from './LanguageSelector';
+import Link from "next/link";
+import { useTranslation } from "../hooks/useTranslation";
+import { useState, useEffect } from "react";
+import { supabase } from "../lib/supabase";
+import type { User } from "@supabase/supabase-js";
+import { LanguageSelector } from "./LanguageSelector";
 
 export const Navbar = () => {
   const { t } = useTranslation();
@@ -29,18 +29,45 @@ export const Navbar = () => {
     <nav className="sticky top-0 z-50 bg-background-light/95 backdrop-blur-md border-b border-nordic-dark/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
-          <Link href="/" className="shrink-0 flex items-center gap-2 cursor-pointer">
+          <Link
+            href="/"
+            className="shrink-0 flex items-center gap-2 cursor-pointer"
+          >
             <div className="w-8 h-8 rounded-lg bg-nordic-dark flex items-center justify-center">
-              <span className="material-icons text-white text-lg">apartment</span>
+              <span className="material-icons text-white text-lg">
+                apartment
+              </span>
             </div>
-            <span className="text-xl font-semibold tracking-tight text-nordic-dark">LuxeEstate</span>
+            <span className="text-xl font-semibold tracking-tight text-nordic-dark">
+              LuxeEstate
+            </span>
           </Link>
-          
+
           <div className="hidden md:flex items-center space-x-8">
-            <a className="text-mosque font-medium text-sm border-b-2 border-mosque px-1 py-1" href="#">{t('nav.buy')}</a>
-            <a className="text-nordic-dark/70 hover:text-nordic-dark font-medium text-sm hover:border-b-2 hover:border-nordic-dark/20 px-1 py-1 transition-all" href="#">{t('nav.rent')}</a>
-            <a className="text-nordic-dark/70 hover:text-nordic-dark font-medium text-sm hover:border-b-2 hover:border-nordic-dark/20 px-1 py-1 transition-all" href="#">{t('nav.sell')}</a>
-            <a className="text-nordic-dark/70 hover:text-nordic-dark font-medium text-sm hover:border-b-2 hover:border-nordic-dark/20 px-1 py-1 transition-all" href="#">{t('nav.saved')}</a>
+            <a
+              className="text-mosque font-medium text-sm border-b-2 border-mosque px-1 py-1"
+              href="#"
+            >
+              {t("nav.buy")}
+            </a>
+            <a
+              className="text-nordic-dark/70 hover:text-nordic-dark font-medium text-sm hover:border-b-2 hover:border-nordic-dark/20 px-1 py-1 transition-all"
+              href="#"
+            >
+              {t("nav.rent")}
+            </a>
+            <a
+              className="text-nordic-dark/70 hover:text-nordic-dark font-medium text-sm hover:border-b-2 hover:border-nordic-dark/20 px-1 py-1 transition-all"
+              href="#"
+            >
+              {t("nav.sell")}
+            </a>
+            <a
+              className="text-nordic-dark/70 hover:text-nordic-dark font-medium text-sm hover:border-b-2 hover:border-nordic-dark/20 px-1 py-1 transition-all"
+              href="#"
+            >
+              {t("nav.saved")}
+            </a>
           </div>
 
           <div className="flex items-center space-x-6">
@@ -55,22 +82,28 @@ export const Navbar = () => {
             {user ? (
               <div className="flex items-center gap-3 border-l border-nordic-dark/10 pl-4 ml-2">
                 <div className="w-9 h-9 rounded-full bg-gray-200 overflow-hidden ring-2 ring-transparent transition-all">
-                  <img 
-                    alt="Profile" 
-                    className="w-full h-full object-cover" 
-                    src={user.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${user.user_metadata?.full_name || "User"}&background=random`}
+                  <img
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                    src={
+                      user.user_metadata?.avatar_url ||
+                      `https://ui-avatars.com/api/?name=${user.user_metadata?.full_name || "User"}&background=random`
+                    }
                   />
                 </div>
-                <button 
+                <button
                   onClick={() => supabase.auth.signOut()}
-                  className="text-sm font-medium text-nordic-dark hover:text-mosque transition-colors"
+                  className="text-sm font-medium cursor-pointer text-nordic-dark hover:text-mosque transition-colors"
                 >
-                  {t('nav.logout')}
+                  {t("nav.logout")}
                 </button>
               </div>
             ) : (
-              <Link href="/login" className="flex items-center gap-2 pl-4 border-l border-nordic-dark/10 ml-2 text-sm font-medium text-nordic-dark hover:text-mosque transition-colors">
-                {t('nav.login')}
+              <Link
+                href="/login"
+                className="flex items-center gap-2 pl-4 border-l border-nordic-dark/10 ml-2 text-sm font-medium text-nordic-dark hover:text-mosque transition-colors"
+              >
+                {t("nav.login")}
               </Link>
             )}
           </div>
@@ -80,12 +113,32 @@ export const Navbar = () => {
       {/* Mobile Menu */}
       <div className="md:hidden border-t border-nordic-dark/5 bg-background-light overflow-hidden h-0 transition-all duration-300">
         <div className="px-4 py-2 space-y-1">
-          <a className="block px-3 py-2 rounded-md text-base font-medium text-mosque bg-mosque/10" href="#">{t('nav.buy')}</a>
-          <a className="block px-3 py-2 rounded-md text-base font-medium text-nordic-dark hover:bg-black/5" href="#">{t('nav.rent')}</a>
-          <a className="block px-3 py-2 rounded-md text-base font-medium text-nordic-dark hover:bg-black/5" href="#">{t('nav.sell')}</a>
-          <a className="block px-3 py-2 rounded-md text-base font-medium text-nordic-dark hover:bg-black/5" href="#">{t('nav.saved')}</a>
+          <a
+            className="block px-3 py-2 rounded-md text-base font-medium text-mosque bg-mosque/10"
+            href="#"
+          >
+            {t("nav.buy")}
+          </a>
+          <a
+            className="block px-3 py-2 rounded-md text-base font-medium text-nordic-dark hover:bg-black/5"
+            href="#"
+          >
+            {t("nav.rent")}
+          </a>
+          <a
+            className="block px-3 py-2 rounded-md text-base font-medium text-nordic-dark hover:bg-black/5"
+            href="#"
+          >
+            {t("nav.sell")}
+          </a>
+          <a
+            className="block px-3 py-2 rounded-md text-base font-medium text-nordic-dark hover:bg-black/5"
+            href="#"
+          >
+            {t("nav.saved")}
+          </a>
         </div>
       </div>
     </nav>
   );
-};
+};
