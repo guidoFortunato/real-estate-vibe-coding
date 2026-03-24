@@ -3,13 +3,15 @@
 import Link from "next/link";
 import { useTranslation } from "../hooks/useTranslation";
 import { useState, useEffect } from "react";
-import { supabase } from "../lib/supabase";
+import { createClient } from "../lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
 import { LanguageSelector } from "./LanguageSelector";
 
 export const Navbar = () => {
   const { t } = useTranslation();
   const [user, setUser] = useState<User | null>(null);
+  
+  const supabase = createClient();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
