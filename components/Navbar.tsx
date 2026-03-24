@@ -10,18 +10,42 @@ import { LanguageSelector } from "./LanguageSelector";
 export const Navbar = () => {
   const { t } = useTranslation();
   const [user, setUser] = useState<User | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   
   const supabase = createClient();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const fetchUserAndRole = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
       setUser(session?.user ?? null);
-    });
+      if (session?.user) {
+        const { data: roleData } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('id', session.user.id)
+          .single();
+        setIsAdmin(roleData?.role === 'admin');
+      } else {
+        setIsAdmin(false);
+      }
+    };
+    
+    fetchUserAndRole();
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setUser(session?.user ?? null);
+      if (session?.user) {
+        const { data: roleData } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('id', session.user.id)
+          .single();
+        setIsAdmin(roleData?.role === 'admin');
+      } else {
+        setIsAdmin(false);
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -74,6 +98,17 @@ export const Navbar = () => {
 
           <div className="flex items-center space-x-6">
             <LanguageSelector />
+            
+            {isAdmin && (
+              <Link
+                href="/admin"
+                className="hidden sm:flex text-white bg-mosque hover:bg-mosque/90 font-medium text-xs px-3 py-1.5 rounded-full transition-all items-center gap-1.5 shadow-sm"
+              >
+                <span className="material-symbols-outlined text-[14px]">shield</span>
+                Admin Panel
+              </Link>
+            )}
+
             <button className="text-nordic-dark hover:text-mosque transition-colors">
               <span className="material-icons">search</span>
             </button>
