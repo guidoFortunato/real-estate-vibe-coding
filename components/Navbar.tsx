@@ -53,22 +53,24 @@ export const Navbar = () => {
               <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border-2 border-background-light"></span>
             </button>
             {user ? (
-              <button 
-                className="flex items-center gap-2 pl-2 border-l border-nordic-dark/10 ml-2"
-                onClick={() => supabase.auth.signOut()}
-                title="Log out"
-              >
-                <div className="w-9 h-9 rounded-full bg-gray-200 overflow-hidden ring-2 ring-transparent hover:ring-mosque transition-all">
+              <div className="flex items-center gap-3 border-l border-nordic-dark/10 pl-4 ml-2">
+                <div className="w-9 h-9 rounded-full bg-gray-200 overflow-hidden ring-2 ring-transparent transition-all">
                   <img 
                     alt="Profile" 
                     className="w-full h-full object-cover" 
                     src={user.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${user.user_metadata?.full_name || "User"}&background=random`}
                   />
                 </div>
-              </button>
+                <button 
+                  onClick={() => supabase.auth.signOut()}
+                  className="text-sm font-medium text-nordic-dark hover:text-mosque transition-colors"
+                >
+                  {t('nav.logout')}
+                </button>
+              </div>
             ) : (
-              <Link href="/login" className="flex items-center gap-2 pl-2 border-l border-nordic-dark/10 ml-4 text-sm font-medium text-nordic-dark hover:text-mosque transition-colors">
-                Log in
+              <Link href="/login" className="flex items-center gap-2 pl-4 border-l border-nordic-dark/10 ml-2 text-sm font-medium text-nordic-dark hover:text-mosque transition-colors">
+                {t('nav.login')}
               </Link>
             )}
           </div>

@@ -5,7 +5,9 @@
     "sell": "Vender",
     "saved": "Guardados",
     "search": "Buscar",
-    "notifications": "Notificaciones"
+    "notifications": "Notificaciones",
+    "login": "Iniciar sesión",
+    "logout": "Cerrar sesión"
   },
   "home": {
     "hero_title_1": "Encuentra tu",
