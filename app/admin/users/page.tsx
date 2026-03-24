@@ -1,17 +1,25 @@
 import { createClient } from "@/lib/supabase/server";
 import { UsersTable } from "../UsersTable";
 
-export default async function AdminUsersPage() {
+import Link from "next/link";
+
+export default async function AdminUsersPage(props: { searchParams?: Promise<{ page?: string }> }) {
+  const searchParams = await props.searchParams;
+  const currentPage = Number(searchParams?.page) || 1;
+  const pageSize = 10;
+  const from = (currentPage - 1) * pageSize;
+  const to = from + pageSize - 1;
+
   const supabase = await createClient();
 
-  const { data: userRoles } = await supabase
+  const { data: userRoles, count } = await supabase
     .from('user_roles')
-    .select('*')
-    .order('created_at', { ascending: false });
+    .select('*', { count: 'exact' })
+    .order('created_at', { ascending: false })
+    .range(from, to);
 
-  const totalUsers = userRoles?.length || 0;
-  const adminUsers = userRoles?.filter(u => u.role === 'admin').length || 0;
-  const standardUsers = userRoles?.filter(u => u.role === 'user').length || 0;
+  const totalUsers = count || 0;
+  const totalPages = Math.ceil(totalUsers / pageSize);
 
   return (
     <main className="grow px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full pb-12 pt-8">
@@ -43,8 +51,8 @@ export default async function AdminUsersPage() {
       {/* Tabs */}
       <div className="mb-6 flex gap-6 border-b border-nordic/10 overflow-x-auto">
         <button className="pb-3 text-sm font-semibold text-mosque border-b-2 border-mosque whitespace-nowrap">All Users ({totalUsers})</button>
-        <button className="pb-3 text-sm font-medium text-nordic/60 hover:text-nordic transition-colors whitespace-nowrap">Admins ({adminUsers})</button>
-        <button className="pb-3 text-sm font-medium text-nordic/60 hover:text-nordic transition-colors whitespace-nowrap">Standard ({standardUsers})</button>
+        <button className="pb-3 text-sm font-medium text-nordic/60 hover:text-nordic transition-colors whitespace-nowrap">Admins</button>
+        <button className="pb-3 text-sm font-medium text-nordic/60 hover:text-nordic transition-colors whitespace-nowrap">Standard</button>
       </div>
 
       {/* Users List Wrapper */}
@@ -66,16 +74,21 @@ export default async function AdminUsersPage() {
         <div className="mt-8 border-t border-nordic/5 py-6 flex items-center justify-between">
           <div className="hidden sm:block">
             <p className="text-sm text-nordic/60">
-              Showing <span className="font-medium text-nordic">1</span> to <span className="font-medium text-nordic">{totalUsers}</span> of <span className="font-medium text-nordic">{totalUsers}</span> users
+              Showing <span className="font-medium text-nordic">{Math.min((currentPage - 1) * pageSize + 1, totalUsers)}</span> to <span className="font-medium text-nordic">{Math.min(currentPage * pageSize, totalUsers)}</span> of <span className="font-medium text-nordic">{totalUsers}</span> users
             </p>
           </div>
           <div className="flex gap-2">
-            <button disabled className="relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-nordic bg-white border border-nordic/10 disabled:opacity-50">
-                Previous
-            </button>
-            <button disabled className="ml-3 relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-nordic bg-white border border-nordic/10 disabled:opacity-50">
-                Next
-            </button>
+            {currentPage > 1 ? (
+              <Link href={`/admin/users?page=${currentPage - 1}`} className="relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-nordic bg-white border border-nordic/10 hover:bg-nordic/5 transition-colors">Previous</Link>
+            ) : (
+              <span className="relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-nordic bg-white border border-nordic/10 opacity-50 cursor-not-allowed">Previous</span>
+            )}
+            
+            {currentPage < totalPages ? (
+              <Link href={`/admin/users?page=${currentPage + 1}`} className="ml-3 relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-nordic bg-white border border-nordic/10 hover:bg-nordic/5 transition-colors">Next</Link>
+            ) : (
+              <span className="ml-3 relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-nordic bg-white border border-nordic/10 opacity-50 cursor-not-allowed">Next</span>
+            )}
           </div>
         </div>
       )}

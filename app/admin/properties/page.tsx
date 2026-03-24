@@ -1,8 +1,15 @@
 import { getProperties } from "@/lib/properties";
 import Image from "next/image";
 
-export default async function AdminPropertiesPage() {
-  const { data: properties, count } = await getProperties({ pageSize: 50 });
+import Link from "next/link";
+
+export default async function AdminPropertiesPage(props: { searchParams?: Promise<{ page?: string }> }) {
+  const searchParams = await props.searchParams;
+  const currentPage = Number(searchParams?.page) || 1;
+  const pageSize = 10;
+
+  const { data: properties, count } = await getProperties({ page: currentPage, pageSize });
+  const totalPages = Math.ceil(count / pageSize);
 
   return (
     <main className="grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -127,15 +134,24 @@ export default async function AdminPropertiesPage() {
           )}
         </div>
 
-        {/* Pagination Dummy (since implementation doesn't have working admin pagination out of box yet) */}
-        {properties.length > 0 && (
-          <div className="px-6 py-4 border-t border-nordic/5 flex items-center justify-between bg-nordic/5">
-            <div className="text-sm text-nordic/60">
-                Showing <span className="font-medium text-nordic">1</span> to <span className="font-medium text-nordic">{properties.length}</span> of <span className="font-medium text-nordic">{count}</span> results
+        {/* Pagination */}
+        {count > 0 && (
+          <div className="px-6 py-4 border-t border-nordic-dark/5 flex items-center justify-between bg-nordic-dark/5">
+            <div className="text-sm text-nordic-dark/60">
+                Showing <span className="font-medium text-nordic-dark">{Math.min((currentPage - 1) * pageSize + 1, count)}</span> to <span className="font-medium text-nordic-dark">{Math.min(currentPage * pageSize, count)}</span> of <span className="font-medium text-nordic-dark">{count}</span> results
             </div>
             <div className="flex gap-2">
-              <button disabled className="px-3 py-1 text-sm border border-nordic/10 rounded-md text-nordic/60 hover:bg-white disabled:opacity-50">Previous</button>
-              <button disabled className="px-3 py-1 text-sm border border-nordic/10 rounded-md text-nordic/60 hover:bg-white disabled:opacity-50">Next</button>
+              {currentPage > 1 ? (
+                <Link href={`/admin/properties?page=${currentPage - 1}`} className="px-3 py-1 text-sm border border-nordic-dark/10 rounded-md text-nordic-dark/60 hover:bg-white hover:text-nordic-dark transition-colors">Previous</Link>
+              ) : (
+                <span className="px-3 py-1 text-sm border border-nordic-dark/10 rounded-md text-nordic-dark/40 cursor-not-allowed bg-white/50">Previous</span>
+              )}
+
+              {currentPage < totalPages ? (
+                <Link href={`/admin/properties?page=${currentPage + 1}`} className="px-3 py-1 text-sm border border-nordic-dark/10 rounded-md text-nordic-dark/60 hover:bg-white hover:text-nordic-dark transition-colors">Next</Link>
+              ) : (
+                <span className="px-3 py-1 text-sm border border-nordic-dark/10 rounded-md text-nordic-dark/40 cursor-not-allowed bg-white/50">Next</span>
+              )}
             </div>
           </div>
         )}
